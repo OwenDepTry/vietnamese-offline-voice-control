@@ -1,0 +1,1 @@
+trial_id,commit,speaker_id,condition,intended_command,predicted_label,ack_received,physical_success,latency_ms,notes

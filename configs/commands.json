@@ -1,0 +1,17 @@
+{
+  "commands": {
+    "LIGHT_ON": "bật đèn",
+    "LIGHT_OFF": "tắt đèn",
+    "FAN_ON": "bật quạt",
+    "FAN_OFF": "tắt quạt"
+  },
+  "non_action_labels": [
+    "unknown",
+    "silence"
+  ],
+  "audio": {
+    "sample_rate_hz": 16000,
+    "channels": 1,
+    "sample_width_bits": 16
+  }
+}

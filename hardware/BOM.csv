@@ -1,0 +1,5 @@
+item,model,quantity,voltage,current_rating,owner,status
+Microcontroller,TBD,1,TBD,TBD,EE,not_selected
+LED_and_resistor,TBD,1,TBD,TBD,EE,not_selected
+DC_fan_and_driver,TBD,1,TBD,TBD,EE,not_selected
+Power_supply,TBD,1,TBD,TBD,EE,not_selected

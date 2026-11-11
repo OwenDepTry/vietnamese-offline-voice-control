@@ -1,0 +1,27 @@
+# Python / IDE
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.vscode/
+.env
+# Data / model artifacts
+*.wav
+*.mp3
+*.flac
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.h5
+# Embedded build
+.pio/
+build/
+# OS
+.DS_Store
+Thumbs.db
+
+*.joblib
+data/manifest.csv
+data/manifest_split.csv
+results/events.jsonl
