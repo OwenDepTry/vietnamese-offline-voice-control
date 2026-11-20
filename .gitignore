@@ -25,3 +25,10 @@ Thumbs.db
 data/manifest.csv
 data/manifest_split.csv
 results/events.jsonl
+# Tools
+data/manifest_*.csv
+data/_*.csv
+data/*.bak-*
+*.tmp
+dist/
+*.spec

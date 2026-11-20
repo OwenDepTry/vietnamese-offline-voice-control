@@ -96,6 +96,44 @@ class PipelineTests(unittest.TestCase):
             with split.open('w',newline='',encoding='utf-8') as f:
                 w=csv.DictWriter(f,fieldnames=data[0].keys());w.writeheader();w.writerows(data)
             with self.assertRaises(ValueError):read_manifest(split)
+    def _synthetic(self,base,units):
+        manifest=base/'manifest.csv';rng=np.random.default_rng(3);t=np.arange(32000)/RATE
+        for n,(speaker,session) in enumerate(units):
+            for k,label in enumerate(LABELS):
+                for rep in range(2):
+                    audio=.15*np.sin(2*np.pi*(180+200*k+n+rep)*t)+rng.normal(0,.002,len(t))
+                    save_recording(audio,manifest,speaker,session,label)
+        return manifest
+    def test_single_speaker_session_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp);manifest=self._synthetic(base,[('p01','s01'),('p01','s02'),('p01','s03')])
+            with self.assertRaises(ValueError):split_manifest(manifest,base/'auto.csv')
+            split=base/'split.csv'
+            summary=split_manifest(manifest,split,validation=['p01/s02'],test=['p01/s03'])
+            self.assertEqual(summary,{'test':['p01/s03'],'train':['p01/s01'],'validation':['p01/s02']})
+            model=base/'m.joblib';report=train(split,model)
+            self.assertFalse(report['validation_new_speaker'])
+            metrics=evaluate(split,model,base/'eval')
+            self.assertEqual(metrics['evaluation_type'],'same_speaker_new_session')
+            with self.assertRaises(ValueError):evaluate(split,model,base/'eval2',require_new_speaker=True)
+    def test_two_speaker_manual_split(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp);manifest=self._synthetic(base,[('p01','s01'),('p01','s02'),('p02','s01')])
+            split=base/'split.csv'
+            split_manifest(manifest,split,validation=['p01/s02'],test=['p02'])
+            model=base/'m.joblib';train(split,model)
+            metrics=evaluate(split,model,base/'eval',require_new_speaker=True)
+            self.assertEqual(metrics['evaluation_type'],'new_speaker')
+    def test_manual_split_rejects_bad_units(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp);manifest=self._synthetic(base,[('p01','s01'),('p01','s02'),('p01','s03')])
+            cases=[dict(validation=['p01/s02']),dict(validation=['p01/s09'],test=['p01/s03']),
+                   dict(validation=['p01/s02'],test=['p01']),dict(validation=['p01/s02'],test=['a/b/c'])]
+            for i,kw in enumerate(cases):
+                with self.subTest(kw=kw),self.assertRaises(ValueError):split_manifest(manifest,base/f'o{i}.csv',**kw)
+            # Missing labels in a session are reported before anything is written.
+            only_two=self._synthetic(base/'b',[('p01','s01'),('p01','s02')])
+            with self.assertRaises(ValueError):split_manifest(only_two,base/'b/o.csv',validation=['p01/s02'],test=['p01/s02'])
     def test_recording_path_guard(self):
         with tempfile.TemporaryDirectory() as tmp:
             with self.assertRaises(ValueError):save_recording(np.zeros(10),Path(tmp)/'m.csv','../bad','s1','LIGHT_ON')

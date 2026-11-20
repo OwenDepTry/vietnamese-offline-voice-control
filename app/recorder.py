@@ -37,20 +37,45 @@ def save_recording(audio,manifest,speaker,session,label,noise='quiet',distance='
         writer.writerow([relative.as_posix(),speaker,session,label,'',noise,distance])
     return path
 
+def play(audio,device=None):
+    import sounddevice as sd
+    sd.play(audio,RATE,device=device);sd.wait()
+
+def review(audio,label):
+    """Return quality flags for a fresh recording (empty list = looks fine)."""
+    from ml.quality import analyze, issues
+    return issues(analyze(audio,RATE),label)
+
 def main():
     p=argparse.ArgumentParser(description='Collect 2-second recordings; press Enter for each sample')
     p.add_argument('--speaker',required=True);p.add_argument('--session',default='s01')
     p.add_argument('--label',choices=LABELS,required=True);p.add_argument('--count',type=int,default=15)
     p.add_argument('--manifest',default='data/manifest.csv');p.add_argument('--device',type=int)
+    p.add_argument('--output-device',type=int,help='Speaker/headphone device for playback (p)')
     p.add_argument('--noise',default='quiet');p.add_argument('--distance',default='1')
+    p.add_argument('--no-review',action='store_true',help='Save every take immediately (old behaviour)')
     p.add_argument('--consent',action='store_true',help='Confirm speaker agreed to recording and intended use')
     a=p.parse_args()
     if not a.consent: p.error('Obtain permission then pass --consent; do not publish private audio')
     if a.count<1: p.error('--count must be positive')
-    for i in range(a.count):
-        input(f'{i+1}/{a.count} {a.label}: Enter to record 2 seconds...')
+    from ml.quality import describe
+    saved=0
+    while saved<a.count:
+        input(f'{saved+1}/{a.count} {a.label}: Enter to record 2 seconds...')
         audio=record(device=a.device)
-        if np.max(np.abs(audio))>=0.99: print('Warning: audio may be clipped; check microphone gain.')
+        if not a.no_review:
+            flags=review(audio,a.label)
+            while True:
+                hint=('CẢNH BÁO: '+describe(flags)) if flags else 'Nghe ổn.'
+                choice=input(f'  {hint}  [Enter]=lưu  r=thu lại  p=nghe lại: ').strip().lower()
+                if choice=='p':
+                    try: play(audio,a.output_device)
+                    except Exception as exc: print('  Không phát được:',exc)
+                    continue
+                break
+            if choice=='r':
+                print('  Đã bỏ bản thu này.');continue
+        elif np.max(np.abs(audio))>=0.99: print('Warning: audio may be clipped; check microphone gain.')
         path=save_recording(audio,a.manifest,a.speaker,a.session,a.label,a.noise,a.distance)
-        print('Saved:',path)
+        saved+=1;print('Saved:',path)
 if __name__=='__main__': main()

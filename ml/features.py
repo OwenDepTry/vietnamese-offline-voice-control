@@ -16,6 +16,7 @@ class FeatureConfig:
     n_mels: int = 40
     n_mfcc: int = 13
     bins: int = 4
+    align: bool = False   # shift detected speech to the clip centre before MFCC
 
     def to_dict(self):
         return asdict(self)
@@ -42,6 +43,20 @@ def load_wav(path, target_rate=16000):
         audio = resample_poly(audio, target_rate // divisor, rate // divisor)
     return np.clip(audio, -1, 1).astype(np.float32)
 
+def center_speech(x, rate):
+    """Circularly shift so the detected speech region sits in the middle.
+
+    People start speaking 0.2-0.5 s after pressing Enter; the 4 temporal bins
+    then see different parts of the word. Rolling (not zero-padding) keeps the
+    room noise, so clips without speech (silence) are left unchanged.
+    """
+    from ml.quality import analyze
+    stats = analyze(x, rate)
+    if stats['speech_start'] is None or stats['active_s'] < 0.1:
+        return x
+    mid = (stats['speech_start'] + stats['speech_end']) / 2
+    return np.roll(x, int(round((len(x) / rate / 2 - mid) * rate)))
+
 def extract(audio, config=None):
     c = config or FeatureConfig()
     x = np.asarray(audio, dtype=np.float64)
@@ -52,6 +67,8 @@ def extract(audio, config=None):
     if len(x) > size:
         raise ValueError(f'Clip exceeds {c.seconds}s; record one short command')
     x = np.pad(x, (0, size-len(x)))
+    if c.align:
+        x = center_speech(x, c.sample_rate)
     emphasized = np.append(x[0], x[1:] - 0.97*x[:-1])
     frames = np.lib.stride_tricks.sliding_window_view(emphasized, c.frame)[::c.hop]
     power = np.abs(np.fft.rfft(frames*np.hamming(c.frame), n=c.n_fft))**2 / c.n_fft

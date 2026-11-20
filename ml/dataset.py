@@ -33,9 +33,12 @@ def read_manifest(path, require_splits=True):
             raise ValueError('Identical WAV bytes occur across splits')
         hashes[digest] = row['split']
         if require_splits:
-            old = speakers.setdefault(row['speaker_id'], row['split'])
+            # A recording session must stay in one split. Whether the same speaker
+            # may appear in several splits is reported by evaluate.py.
+            key = (row['speaker_id'], row['session_id'])
+            old = speakers.setdefault(key, row['split'])
             if old != row['split']:
-                raise ValueError('Speaker leakage: ' + row['speaker_id'])
+                raise ValueError('Session leakage: ' + '/'.join(key))
         row['_file'] = str(p)
     return rows
 

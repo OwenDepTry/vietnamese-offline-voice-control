@@ -2,20 +2,20 @@ import argparse
 import json
 from app.common import COMMANDS
 from app.controller import Controller
-from app.serial_client import Simulator, SerialClient
+from app.serial_client import open_backend
 from app.recorder import record
 
 def main():
     p=argparse.ArgumentParser(description='Offline voice controller; simulation is default')
     p.add_argument('--mode',choices=['simulation','serial'],default='simulation')
-    p.add_argument('--port');p.add_argument('--model');p.add_argument('--device',type=int)
+    p.add_argument('--port',help='COM port, or "fake" for the built-in virtual firmware');p.add_argument('--fault',default='none',help='Fault for --port fake: none/timeout/error/reset/mismatch');p.add_argument('--model');p.add_argument('--device',type=int)
     p.add_argument('--log',default='results/events.jsonl');a=p.parse_args()
     if a.mode=='serial' and not a.port: p.error('--port is required in serial mode')
     predictor=None
     if a.model:
         from ml.predict import Predictor
         predictor=Predictor(a.model)
-    backend=Simulator() if a.mode=='simulation' else SerialClient(a.port)
+    backend=open_backend(None if a.mode=='simulation' else a.port,a.fault)
     controller=Controller(backend,predictor,a.log)
     print('MODE:',a.mode,'| commands:',', '.join(COMMANDS))
     print('Type a command, voice (record 2s), or quit. Simulation does not control physical hardware.')

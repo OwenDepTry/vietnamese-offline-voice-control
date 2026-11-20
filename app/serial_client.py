@@ -69,3 +69,18 @@ class Simulator:
         self.state[device.lower()]=value=='ON'
         return {'mode':'simulation','action':action,'state':dict(self.state),'physical_confirmed':False}
     def close(self): pass
+
+def open_backend(port=None,fault='none',latency_ms=5.0):
+    """None -> Simulator; 'fake' -> SerialClient talking to the in-process virtual
+    firmware (app.fake_device); anything else -> real serial port name."""
+    if not port: return Simulator()
+    if port.lower()=='fake':
+        from app.fake_device import FakeDevice, FakeTransport
+        return SerialClient(transport=FakeTransport(FakeDevice(fault),latency_ms))
+    return SerialClient(port)
+
+def device_state(backend):
+    """Output state if the backend can know it (simulator / virtual firmware); else None."""
+    if isinstance(backend,Simulator): return dict(backend.state)
+    state=getattr(getattr(backend,'transport',None),'state',None)
+    return dict(state) if isinstance(state,dict) else None
