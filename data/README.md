@@ -1,6 +1,6 @@
 # Dữ liệu
 
-Thư mục này không đưa file âm thanh lên GitHub. Chỉ thu khi người tham gia đã đồng ý, bảng nối tên thật với mã ẩn danh giữ ở ngoài repo. File gốc nằm trong `raw/<người>/<phiên>/`, dữ liệu đã xử lý (nếu có) để trong `processed/`.
+Thư mục này không đưa file âm thanh lên GitHub. Chỉ thu giọng người khác khi họ đồng ý, và không đưa file của họ lên mạng. Ai ứng với mã nào thì tự ghi nhớ hoặc ghi ở ngoài repo. File gốc nằm trong `raw/<người>/<phiên>/`, dữ liệu đã xử lý (nếu có) để trong `processed/`.
 
 `manifest.example.csv` là mẫu các cột của manifest. File `manifest.csv` thật do `app.recorder` tự tạo.
 

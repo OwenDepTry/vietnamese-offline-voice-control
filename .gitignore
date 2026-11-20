@@ -32,6 +32,3 @@ data/*.bak-*
 *.tmp
 dist/
 *.spec
-# Consent records (keep outside the repo; this is a safety net)
-consent/
-consent_log.csv

@@ -1,6 +1,6 @@
 # Vietnamese Offline Voice Control
 
-Đồ án liên ngành CNTT + Điện tử Viễn thông: nhận lệnh giọng nói tiếng Việt ngay trên máy (không cần Internet) để bật/tắt đèn và quạt 5V qua vi điều khiển.
+Dự án tự làm của Đạt (CNTT) và Thái (Điện tử Viễn thông): nhận lệnh giọng nói tiếng Việt ngay trên máy (không cần Internet) để bật/tắt đèn và quạt 5V qua vi điều khiển.
 
 Hiện tại phần mềm đã chạy được ở chế độ mô phỏng và với firmware ảo. Nhóm đang thu thêm dữ liệu giọng nói để train model thật; phần cứng và firmware đang làm.
 
@@ -30,7 +30,7 @@ Linux/macOS thì tạo venv bằng `python3 -m venv .venv`, activate rồi `pip 
 
 ## Thu dữ liệu
 
-Người tham gia ký giấy đồng ý trước (mẫu ở `docs/CONSENT_FORM.md`), mỗi người dùng một mã ẩn danh như `p01`, `p02`. Mỗi phiên thu đủ 6 nhãn.
+Thu giọng ai thì hỏi ý người đó trước (cờ `--consent` là để xác nhận việc này). Mỗi người dùng một mã ẩn danh như `p01`, `p02`, mỗi phiên thu đủ 6 nhãn.
 
 ```powershell
 python -m sounddevice        # xem số thứ tự micro
@@ -116,7 +116,6 @@ Test dùng âm thanh tổng hợp và serial giả, nên chỉ kiểm tra là co
 - `docs/TEST_PLAN.md`: tiêu chí kiểm thử
 - `docs/IMPLEMENTATION.md`: mô tả từng file code
 - `docs/REPORT_TEMPLATE.md`: khung báo cáo
-- `docs/CONSENT_FORM.md`: mẫu giấy đồng ý thu âm
 - `hardware/`, `firmware/`: phần của Thái (ĐTVT)
 
 Ngoài phạm vi 14 ngày: CNN, nghe liên tục, wake word, chạy model trên vi điều khiển. Repo chưa chọn license.

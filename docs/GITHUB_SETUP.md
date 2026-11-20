@@ -30,7 +30,7 @@ Lên GitHub bấm "Compare & pull request", điền mẫu PR, đợi CI xanh th�
 
 ## Không commit
 
-- File thu âm, `data/manifest*.csv`, giấy đồng ý (đã có trong `.gitignore`)
+- File thu âm, `data/manifest*.csv` (đã có trong `.gitignore`)
 - `.venv`, model `.joblib`
 - Notebook còn output (Clear All Outputs trước khi commit, test sẽ báo nếu quên)
 

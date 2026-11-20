@@ -7,7 +7,7 @@ Có thể tạo tay trên GitHub hoặc chạy `scripts/create_issues.ps1` (cầ
 | 1 | IT-01: Bỏ đoạn im lặng đầu file và tắt lọc ồn micro | it, data | File nào cũng bắt đầu bằng khoảng 0,1-0,18 s toàn số 0, và tiếng nền trong file silence giảm khoảng 14 dB sau giây 1,3 (có thể do Audio enhancements của Windows). Sửa recorder hoặc ghi vào phần hạn chế; nếu sửa thì thu lại s01. |
 | 2 | BOTH-03: Thu p01/s02 và p01/s03 | it, data | Mỗi phiên 6 nhãn x 5 mẫu, thu lúc khác hoặc chỗ khác trong phòng, câu unknown khác với s01. Thu xong chạy ml.check_data. |
 | 3 | IT-05/06: Kết quả baseline đầu tiên | it | Notebook 02 để chọn cấu hình, notebook 03 để chấm test một lần. Đính kèm summary.md và confusion matrix. |
-| 4 | BOTH-03: Thu giọng p02 từ xa | both, data | Ký giấy đồng ý, p02 thu trên máy của mình rồi gửi zip, gộp bằng ml.merge_manifest, đánh giá lại với --require-new-speaker. |
+| 4 | BOTH-03: Thu giọng p02 từ xa | both, data | Hỏi ý người thu trước, p02 thu trên máy của mình rồi gửi zip, gộp bằng ml.merge_manifest, đánh giá lại với --require-new-speaker. |
 | 5 | IT-07: Đo độ trễ và chạy offline | it | Làm theo docs/MEASUREMENTS.md mục 1 và 2, ghi median/p95 vào báo cáo. |
 | 6 | EE-01/02: Chọn linh kiện, điền BOM, vẽ sơ đồ nối dây | ee | hardware/BOM.csv và hardware/wiring.md. Đầu ra phải tắt khi khởi động. |
 | 7 | EE-03/04: Firmware theo PROTOCOL.md | ee | Chạy python -m app.conformance --port COMx tới khi đạt hết. |

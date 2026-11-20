@@ -3,7 +3,6 @@
 > Bản nháp. Các chỗ `[cần điền: ...]` sẽ bổ sung khi có kết quả thật, kèm theo lệnh hoặc notebook dùng để lấy số liệu. Không điền số từ dữ liệu tổng hợp hay dữ liệu thử.
 
 **Nhóm:** Phan Tiến Đạt (CNTT), Thái (Điện tử Viễn thông)
-**Học phần / GVHD:** [cần điền]
 **Mã nguồn:** github.com/OwenDepTry/vietnamese-offline-voice-control, commit [cần điền: `git rev-parse --short HEAD`]
 
 ---
@@ -60,7 +59,7 @@ Phần cứng: [cần điền (Thái): board, mạch lái, nguồn, lấy từ `
 
 Mỗi bản thu là file WAV 2 giây, 16 kHz, mono, 16 bit. Micro: [cần điền]. Phòng: [cần điền]. Khoảng cách mặc định 1 m.
 
-Người tham gia ký giấy đồng ý trước khi thu (mẫu ở phụ lục B). Dữ liệu chỉ gắn mã ẩn danh và không đưa lên repo. Sau mỗi lần thu, chương trình tự kiểm tra xem có bị nói nhỏ, bị cắt chữ hay bị rè không, và cho phép thu lại ngay.
+Những người góp giọng đều được hỏi ý trước khi thu. Dữ liệu chỉ gắn mã ẩn danh và không đưa lên repo. Sau mỗi lần thu, chương trình tự kiểm tra xem có bị nói nhỏ, bị cắt chữ hay bị rè không, và cho phép thu lại ngay.
 
 | Người | Phiên | Số mẫu mỗi nhãn | Tổng | Điều kiện |
 |---|---|---|---|---|
@@ -183,6 +182,5 @@ py -3.12 -m venv .venv
 ## Phụ lục
 
 - A. Giao thức serial: `docs/PROTOCOL.md`, bảng hành vi trong notebook 04
-- B. Mẫu giấy đồng ý thu âm: `docs/CONSENT_FORM.md`
-- C. Kế hoạch kiểm thử và cách đo: `docs/TEST_PLAN.md`, `docs/MEASUREMENTS.md`
-- D. Video demo chạy offline: [cần điền link]
+- B. Kế hoạch kiểm thử và cách đo: `docs/TEST_PLAN.md`, `docs/MEASUREMENTS.md`
+- C. Video demo chạy offline: [cần điền link]
