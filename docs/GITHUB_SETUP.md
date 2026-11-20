@@ -2,7 +2,7 @@
 
 Repo: https://github.com/OwenDepTry/vietnamese-offline-voice-control
 
-## Lần đầu (bạn ĐTVT)
+## Lần đầu (Thái)
 
 1. Đạt mời vào repo qua Settings > Collaborators.
 2. Clone về và cài môi trường như README.

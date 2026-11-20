@@ -117,6 +117,6 @@ Test dùng âm thanh tổng hợp và serial giả, nên chỉ kiểm tra là co
 - `docs/IMPLEMENTATION.md`: mô tả từng file code
 - `docs/REPORT_TEMPLATE.md`: khung báo cáo
 - `docs/CONSENT_FORM.md`: mẫu giấy đồng ý thu âm
-- `hardware/`, `firmware/`: phần của bạn bên ĐTVT
+- `hardware/`, `firmware/`: phần của Thái (ĐTVT)
 
 Ngoài phạm vi 14 ngày: CNN, nghe liên tục, wake word, chạy model trên vi điều khiển. Repo chưa chọn license.

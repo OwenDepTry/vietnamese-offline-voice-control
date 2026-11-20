@@ -5,7 +5,7 @@ Mấy notebook này dùng để xem, nghe và giải thích dữ liệu với k�
 - `01_kham_pha_du_lieu`: số mẫu theo phiên, các file nên nghe lại (nghe luôn trong notebook), dạng sóng và phổ tần, thời điểm bắt đầu nói, PCA của đặc trưng. Chỉ cần có `data/manifest.csv`.
 - `02_huan_luyen`: chia tập, so sánh cấu hình trên validation, train, chọn ngưỡng, learning curve, xem các mẫu đoán sai trên validation. Cần ít nhất 3 phiên đủ 6 nhãn.
 - `03_danh_gia`: chấm test một lần, confusion matrix, nghe các mẫu sai, phân bố score, các lượt thử trực tiếp và độ trễ. Cần model từ notebook 02.
-- `04_firmware_ao`: giao thức serial với firmware ảo (gửi gì thì nhận gì, khi lỗi thì sao, độ trễ). Không cần dữ liệu, có thể gửi cho bạn ĐTVT xem.
+- `04_firmware_ao`: giao thức serial với firmware ảo (gửi gì thì nhận gì, khi lỗi thì sao, độ trễ). Không cần dữ liệu, có thể gửi cho Thái xem.
 
 ## Cài và mở
 

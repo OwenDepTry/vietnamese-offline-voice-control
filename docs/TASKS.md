@@ -1,6 +1,6 @@
 # Phân công và tiến độ
 
-Cập nhật ngày 21/11/2026. Tên bạn bên ĐTVT sẽ bổ sung sau.
+Cập nhật ngày 21/11/2026. Nhóm gồm Đạt (CNTT) và Thái (ĐTVT).
 
 Cách ghi trạng thái:
 - Xong: đã có và đã thử với dữ liệu hoặc phần cứng thật.
@@ -23,7 +23,7 @@ Chỉ ghi "Xong" khi có bằng chứng (kết quả trong `results/`, ảnh, vi
 | IT-07 | App nhấn để nói, gửi lệnh, xử lý ACK/ERR/timeout | Có code | GUI, CLI, firmware ảo, test chặn mạng. Còn đo độ trễ và thử với board |
 | IT-08 | Hướng dẫn cài đặt, khóa phiên bản thư viện | Xong | `requirements.txt`, README, CI |
 
-## Bạn ĐTVT
+## Thái (ĐTVT)
 
 | Mã | Việc | Trạng thái | Ghi chú |
 |---|---|---|---|

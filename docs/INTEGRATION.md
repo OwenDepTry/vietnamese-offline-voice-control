@@ -10,7 +10,7 @@ Cả hai đọc `docs/PROTOCOL.md` và notebook `notebooks/04_firmware_ao.ipynb`
 - [ ] Độ dài dòng: tối đa 64 byte tính cả LF. Dài hơn thì bỏ tới LF và trả `ERR,0,BAD_FORMAT`.
 - [ ] Lệnh: `CMD,<id>,<action>`, id từ 1 tới 2147483647, action là một trong LIGHT_ON, LIGHT_OFF, FAN_ON, FAN_OFF.
 - [ ] Trả lời: `ACK,<id>,<action>` hoặc `ERR,<id>,<code>`. Không đọc được id thì để id = 0.
-- [ ] Mã lỗi: `BAD_FORMAT`, `UNKNOWN_COMMAND`, `HARDWARE_ERROR`. Khi nào thì trả HARDWARE_ERROR thì bên ĐTVT quyết định.
+- [ ] Mã lỗi: `BAD_FORMAT`, `UNKNOWN_COMMAND`, `HARDWARE_ERROR`. Khi nào thì trả HARDWARE_ERROR thì Thái quyết định.
 - [ ] Dòng rỗng: hiện đang trả `ERR,0,BAD_FORMAT` (công cụ kiểm tra cũng yêu cầu vậy). Nếu muốn bỏ qua dòng rỗng thì sửa luôn fake_device và conformance.
 - [ ] Khởi động: đầu ra tắt, sẵn sàng thì gửi `READY,1`. Board không tự reset khi mở cổng (như STM32 qua USB CDC) thì gửi lại `READY,1` khi máy tính mở cổng (DTR bật), nhưng không gửi lại khi đang xử lý lệnh.
 - [ ] Thời gian: app chờ READY 5 giây, chờ ACK 1 giây. Firmware nên trả lời dưới 50 ms.
@@ -64,7 +64,7 @@ python -m app.conformance --port COM5 --observe   # hỏi thêm đèn/quạt có
 
 ## 4. Chia việc
 
-| Bước | Đạt (CNTT) | Bạn ĐTVT |
+| Bước | Đạt (CNTT) | Thái (ĐTVT) |
 |---|---|---|
 | Chốt giao thức | Duyệt, sửa fake_device/conformance nếu đổi | Duyệt, quyết định khi nào dùng HARDWARE_ERROR |
 | Firmware | Hỗ trợ đọc kết quả conformance | Viết, nạp, chạy conformance tới khi đạt 19/19 |

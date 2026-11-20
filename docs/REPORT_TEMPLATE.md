@@ -2,7 +2,7 @@
 
 > Bản nháp. Các chỗ `[cần điền: ...]` sẽ bổ sung khi có kết quả thật, kèm theo lệnh hoặc notebook dùng để lấy số liệu. Không điền số từ dữ liệu tổng hợp hay dữ liệu thử.
 
-**Nhóm:** Phan Tiến Đạt (CNTT), [họ tên] (Điện tử Viễn thông)
+**Nhóm:** Phan Tiến Đạt (CNTT), Thái (Điện tử Viễn thông)
 **Học phần / GVHD:** [cần điền]
 **Mã nguồn:** github.com/OwenDepTry/vietnamese-offline-voice-control, commit [cần điền: `git rev-parse --short HEAD`]
 
@@ -41,7 +41,7 @@ Toàn bộ phần nhận dạng chạy trên máy. Nhóm kiểm tra điều này
 
 Phần mềm viết bằng Python 3.12 với NumPy, SciPy, scikit-learn, Tkinter và pySerial (phiên bản ghi trong `requirements.txt`).
 
-Phần cứng: [cần điền (ĐTVT): board, mạch lái, nguồn, lấy từ `hardware/BOM.csv` và `hardware/wiring.md`, kèm ảnh mạch.]
+Phần cứng: [cần điền (Thái): board, mạch lái, nguồn, lấy từ `hardware/BOM.csv` và `hardware/wiring.md`, kèm ảnh mạch.]
 
 ## 3. Dữ liệu
 
@@ -103,7 +103,7 @@ Chương trình tự kiểm tra trùng đường dẫn, trùng nội dung file g
 
 ### 4.5 Phần cứng và firmware
 
-[cần điền (ĐTVT): sơ đồ khối, sơ đồ nối dây, tính dòng và áp, mạch lái quạt và diode bảo vệ, trạng thái chân lúc khởi động, cấu trúc firmware, kết quả `python -m app.conformance`.]
+[cần điền (Thái): sơ đồ khối, sơ đồ nối dây, tính dòng và áp, mạch lái quạt và diode bảo vệ, trạng thái chân lúc khởi động, cấu trúc firmware, kết quả `python -m app.conformance`.]
 
 ## 5. Thiết lập thí nghiệm
 
@@ -164,7 +164,7 @@ Các chỉ số: accuracy, macro-F1, F1 từng nhãn, confusion matrix; tỉ l�
 | Thành viên | Phần việc chính | Có thể kiểm tra ở |
 |---|---|---|
 | Phan Tiến Đạt (CNTT) | Thu dữ liệu, đặc trưng, train và đánh giá, GUI/CLI, giao thức phía máy tính, firmware ảo, notebook | lịch sử commit, `docs/TASKS.md` mục IT |
-| [họ tên] (ĐTVT) | [cần điền: linh kiện, mạch, firmware, đo kiểm] | `hardware/`, `firmware/`, mục EE |
+| Thái (ĐTVT) | [cần điền: linh kiện, mạch, firmware, đo kiểm] | `hardware/`, `firmware/`, mục EE |
 | Cả hai | Giao thức, ghép nối, đánh giá, video | mục BOTH |
 
 ## 10. Cách chạy lại kết quả

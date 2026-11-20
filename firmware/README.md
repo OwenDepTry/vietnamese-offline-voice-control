@@ -1,6 +1,6 @@
 # Firmware
 
-Phần này bạn ĐTVT phụ trách. Chưa chốt board nên chưa có code. Sau khi chọn board (EE-01) thì thêm `src/`, cấu hình build và hướng dẫn nạp.
+Phần này Thái (ĐTVT) phụ trách. Chưa chốt board nên chưa có code. Sau khi chọn board (EE-01) thì thêm `src/`, cấu hình build và hướng dẫn nạp.
 
 Nên tách 3 phần: đọc và phân tích lệnh serial, điều khiển chân ra, lưu trạng thái. Làm theo `docs/PROTOCOL.md`. Không nối quạt thẳng vào chân GPIO mà phải qua transistor/MOSFET, có diode bảo vệ. MVP chỉ dùng điện áp thấp, không đụng điện lưới.
 
