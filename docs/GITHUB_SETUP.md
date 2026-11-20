@@ -1,21 +1,41 @@
-# Đưa khung repo lên GitHub
+# Làm việc với GitHub
 
-Gói này không tạo repo từ xa và chưa có lịch sử Git. Giải nén, mở terminal tại thư mục chứa README.md.
+Repo: https://github.com/OwenDepTry/vietnamese-offline-voice-control
 
-Tạo repo trống tên vietnamese-offline-voice-control trong tài khoản OwenDepTry. Không thêm README, .gitignore hay license tự động vì khung đã có file tương ứng (license sẽ chọn sau).
+## Lần đầu (bạn ĐTVT)
+
+1. Đạt mời vào repo qua Settings > Collaborators.
+2. Clone về và cài môi trường như README.
 
 ```powershell
-git init -b main
-git add .
-git commit -m "chore: initialize project structure and two-person roadmap"
-git remote add origin https://github.com/OwenDepTry/vietnamese-offline-voice-control.git
-git push -u origin main
+git clone https://github.com/OwenDepTry/vietnamese-offline-voice-control.git
 ```
 
-Nếu tên repo đã tồn tại, không ghi đè: chọn tên khác và sửa URL. Mời cộng tác viên qua Settings → Collaborators bằng tài khoản chính xác của họ.
+## Mỗi lần làm việc
 
-Đạt tạo nhánh feat/audio-recorder. Người ĐTVT clone repo rồi tạo feat/serial-control. Mỗi người làm PR nhỏ vào main; trước nhánh mới cập nhật main bằng git pull --ff-only. Không cần duy trì hai nhánh cá nhân dài hạn.
+Làm trên nhánh riêng rồi mở Pull Request, để CI chạy test trước khi gộp vào `main`:
 
-About đề xuất: Offline Vietnamese voice command recognition for low-voltage device control, integrating machine learning, embedded firmware, and serial communication.
+```powershell
+git checkout main
+git pull --ff-only
+git checkout -b ten-nhanh            # ví dụ: firmware-parser, recorder-preroll
+# ... sửa code ...
+git add -A
+git ls-files | Select-String "\.wav|data/manifest.csv|\.venv|\.joblib|events.jsonl"   # phải không in ra gì
+git commit -m "mô tả ngắn"
+git push -u origin ten-nhanh
+```
+
+Lên GitHub bấm "Compare & pull request", điền mẫu PR, đợi CI xanh thì merge. Mỗi PR nên nhỏ, làm xong một việc. Không cần giữ nhánh cá nhân lâu dài.
+
+## Không commit
+
+- File thu âm, `data/manifest*.csv`, giấy đồng ý (đã có trong `.gitignore`)
+- `.venv`, model `.joblib`
+- Notebook còn output (Clear All Outputs trước khi commit, test sẽ báo nếu quên)
+
+## Thông tin repo
+
+About: Offline Vietnamese voice command recognition for low-voltage device control, integrating machine learning, embedded firmware, and serial communication.
 
 Topics: vietnamese, speech-recognition, keyword-spotting, machine-learning, embedded-systems, offline, serial-communication.

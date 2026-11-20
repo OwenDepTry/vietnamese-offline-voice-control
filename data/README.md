@@ -1,9 +1,11 @@
 # Dữ liệu
 
-Không commit audio cá nhân. Chỉ thu khi người tham gia đồng ý; lưu ánh xạ danh tính ngoài repo. Đặt file trong raw/, dữ liệu xử lý trong processed/.
+Thư mục này không đưa file âm thanh lên GitHub. Chỉ thu khi người tham gia đã đồng ý, bảng nối tên thật với mã ẩn danh giữ ở ngoài repo. File gốc nằm trong `raw/<người>/<phiên>/`, dữ liệu đã xử lý (nếu có) để trong `processed/`.
 
-Pilot đề xuất: 10 người × 4 lệnh × 15 lượt = 600 mẫu lệnh, thu nhiều phiên; thêm silence, tiếng ồn và lời nói ngoài tập. Đây chỉ là điểm bắt đầu, chưa đủ để khẳng định tổng quát hóa. Mở rộng số người sau pilot.
+`manifest.example.csv` là mẫu các cột của manifest. File `manifest.csv` thật do `app.recorder` tự tạo.
 
-Chia theo speaker_id khi đủ người; ví dụ 6/2/2 người. Nhóm nhỏ có thể chỉ định theo phiên (xem README gốc), nhưng một phiên không được nằm ở hai tập cho train/validation/test ở pilot. Test nhỏ chỉ là kết quả sơ bộ. Không dùng test để chọn mô hình hoặc ngưỡng. Augmentation chỉ áp dụng train và phải giữ nguồn gốc mẫu.
+Mục tiêu pilot ban đầu là khoảng 10 người, mỗi người 4 lệnh x 15 lượt, thu nhiều phiên, cộng thêm silence, tiếng ồn và câu ngoài tập. Số này chỉ để bắt đầu, chưa đủ để kết luận model nhận được người lạ.
 
-Dùng manifest.example.csv làm mẫu cấu trúc (hiện chỉ có header). Micro laptop/USB ở MVP; ghi lại thiết bị thu để phân tích khác biệt miền dữ liệu.
+Khi đủ người thì chia theo người nói, ví dụ 6/2/2 người cho train/validation/test. Nhóm ít người thì chia theo phiên (xem README), nhưng một phiên không được nằm ở hai tập. Không dùng test để chọn model hay ngưỡng. Augmentation chỉ áp dụng cho train.
+
+Nên ghi lại micro dùng để thu, vì đổi micro có thể làm kết quả khác đi nhiều.

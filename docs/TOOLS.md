@@ -1,8 +1,8 @@
-# Công cụ phần mềm bổ sung
+# Hướng dẫn các công cụ
 
-Mọi lệnh chạy từ thư mục gốc repo, trong venv. Các lệnh không ghi đè kết quả cũ: đặt tên file/thư mục mới cho mỗi lần chạy.
+Chạy mọi lệnh ở thư mục gốc repo, bằng python trong `.venv`. Các lệnh đều không ghi đè kết quả cũ, nên mỗi lần chạy đặt tên file hoặc thư mục mới.
 
-## 1. Kiểm tra chất lượng dữ liệu
+## Kiểm tra dữ liệu
 
 ```powershell
 python -m ml.check_data
@@ -10,72 +10,72 @@ python -m ml.check_data --report results/data_check.csv
 python -m ml.check_data --drop-flagged data/manifest_clean.csv
 ```
 
-In bảng số mẫu theo phiên × nhãn, báo phiên thiếu nhãn (exit code 1) và liệt kê file nên nghe lại:
+Lệnh in bảng số mẫu theo từng phiên và nhãn, báo phiên nào còn thiếu nhãn, và liệt kê các file nên nghe lại:
 
-| Cờ | Ý nghĩa |
-|---|---|
-| `too_quiet` | nói quá nhỏ/xa micro (đỉnh < 0.15) |
-| `cut_start`, `cut_end` | tiếng nói chạm đầu/cuối file, có thể mất chữ |
-| `clipped` | quá to, bị rè |
-| `no_speech` | gần như không có tiếng nói |
-| `not_silent` | nhãn silence nhưng có tiếng động lớn |
+- `too_quiet`: nói nhỏ quá hoặc xa micro
+- `cut_start`, `cut_end`: tiếng nói chạm đầu/cuối file, có thể bị mất chữ
+- `clipped`: to quá, bị rè
+- `no_speech`: gần như không có tiếng nói
+- `not_silent`: file silence nhưng có tiếng động lớn
 
-Đây là luật ước lượng: **nghe lại trước khi bỏ**. `--drop-flagged` chỉ tạo manifest mới không có các file bị gắn cờ, không xóa WAV. Muốn xóa hẳn một bản thu, xóa cả WAV và dòng tương ứng trong `data/manifest.csv`.
+Đây chỉ là luật ước lượng nên nghe lại trước rồi mới bỏ. `--drop-flagged` chỉ tạo một manifest mới không có các file bị gắn cờ, không xóa file WAV. Muốn xóa hẳn thì xóa cả file WAV lẫn dòng của nó trong `data/manifest.csv`.
 
-Khi thu âm, `app.recorder` giờ tự kiểm tra từng bản: Enter = lưu, `r` = thu lại, `p` = nghe lại (chọn loa bằng `--output-device`). Dùng `--no-review` để lưu ngay như trước.
+Lúc thu, `app.recorder` cũng tự kiểm tra từng bản: Enter để lưu, `r` để thu lại, `p` để nghe lại (chọn loa bằng `--output-device`). Thêm `--no-review` nếu muốn lưu luôn như cách cũ.
 
-## 2. Gộp dữ liệu thu từ máy khác
+## Gộp dữ liệu từ máy khác
 
-Người kia clone repo, cài venv, thu với mã riêng (vd. `--speaker p02`), rồi gửi `data/manifest.csv` kèm thư mục `data/raw/p02/` (nén zip). Giải nén ở đâu cũng được, rồi:
+Bạn kia clone repo, cài môi trường, thu bằng mã riêng (ví dụ `--speaker p02`), rồi gửi file `data/manifest.csv` kèm thư mục `data/raw/p02/` (nén zip). Giải nén ở đâu cũng được, sau đó:
 
 ```powershell
 python -m ml.merge_manifest --incoming D:\tu_p02\data\manifest.csv --dry-run
 python -m ml.merge_manifest --incoming D:\tu_p02\data\manifest.csv
 ```
 
-WAV được chép vào `data/raw/<người>/<phiên>/`, dòng mới được nối vào `data/manifest.csv`, bản cũ được sao lưu thành `manifest.csv.bak-<thời gian>`. Lệnh dừng mà không đổi gì nếu: trùng mã người/phiên đã có, trùng nội dung WAV, thiếu file. Nếu người kia lỡ thu bằng `p01`: `--rename-speaker p01=p02`.
+File WAV sẽ được chép vào `data/raw/<người>/<phiên>/`, các dòng mới được thêm vào `data/manifest.csv`, file cũ được sao lưu thành `manifest.csv.bak-<thời gian>`. Nếu trùng mã người/phiên, trùng file, hoặc thiếu file thì lệnh dừng và không đổi gì. Nếu bạn kia lỡ thu bằng mã `p01` thì thêm `--rename-speaker p01=p02`.
 
-## 3. Firmware ảo (thiết bị giả bằng Python)
+## Firmware ảo
 
-`app/fake_device.py` làm đúng như firmware theo `docs/PROTOCOL.md`: READY khi khởi động, ACK/ERR, giới hạn 64 byte, lệnh sai không đổi trạng thái.
+`app/fake_device.py` là một thiết bị giả trả lời đúng theo `docs/PROTOCOL.md`: gửi READY khi khởi động, trả ACK/ERR, giới hạn 64 byte mỗi dòng, lệnh sai thì không đổi trạng thái.
 
-Không cần cài gì thêm:
+Cách nhanh nhất, không cần cài gì thêm:
+
 ```powershell
 python -m app.gui --model models/baseline.joblib --port fake
 python -m app.main --mode serial --port fake
 ```
-App đi qua đúng code `SerialClient` như với board thật; GUI hiện trạng thái đèn/quạt của thiết bị ảo.
 
-Thử cách app xử lý sự cố: `--fault timeout|error|reset|mismatch` (vd. `--port fake --fault timeout`). Sau lỗi bấm **Kết nối lại** trong GUI.
+App vẫn đi qua đúng phần code serial như khi nối board thật, và GUI hiện trạng thái đèn/quạt của thiết bị giả.
 
-Qua cặp cổng COM ảo (kiểm tra cả pySerial và driver): cài [com0com](https://com0com.sourceforge.net/), tạo cặp, ví dụ COM10↔COM11, rồi:
+Muốn thử app xử lý lỗi thế nào thì thêm `--fault timeout` (hoặc `error`, `reset`, `mismatch`). Sau khi bị lỗi thì bấm "Kết nối lại" trong GUI.
+
+Nếu muốn thử cả pySerial và driver cổng COM thì cài [com0com](https://com0com.sourceforge.net/), tạo một cặp cổng ảo (ví dụ COM10 và COM11) rồi mở hai cửa sổ:
+
 ```powershell
-python -m app.fake_device --port COM11          # cửa sổ 1: thiết bị
-python -m app.gui --model models/baseline.joblib --port COM10   # cửa sổ 2: app
+python -m app.fake_device --port COM11                              # cửa sổ 1: thiết bị
+python -m app.gui --model models/baseline.joblib --port COM10       # cửa sổ 2: app
 ```
-Thiết bị ảo gửi READY mỗi khi app mở cổng bên kia (qua tín hiệu DSR). Chế độ này chưa được kiểm chứng trên Windows thật.
 
-Thành viên ĐTVT có thể dùng `FakeDevice.handle()` làm bản tham chiếu khi viết firmware thật.
+Cách này nhóm chưa thử trên Windows.
 
-## 4. Cải thiện mô hình
+## Cải thiện model
 
-Tùy chọn mới của `ml.train_baseline`:
+`ml.train_baseline` có thêm mấy tùy chọn:
 
-| Tùy chọn | Tác dụng |
-|---|---|
-| `--classifier logreg` / `svm` / `mlp` | hồi quy logistic (mặc định), SVM RBF, mạng nơ-ron nhỏ 1 lớp ẩn |
-| `--align` | dời đoạn có tiếng nói về giữa clip trước khi tính MFCC (mỗi lần bạn bắt đầu nói ở thời điểm khác nhau) |
-| `--augment N` | thêm N bản biến thể cho mỗi clip **train**: dịch thời gian, đổi âm lượng, trộn tiếng nền từ các clip silence (SNR 10–30 dB) |
+- `--classifier logreg`, `svm` hoặc `mlp`: hồi quy logistic (mặc định), SVM, hoặc mạng nơ-ron nhỏ một lớp ẩn.
+- `--align`: dời đoạn có tiếng nói vào giữa clip trước khi tính MFCC, vì mỗi lần mình bắt đầu nói ở thời điểm hơi khác nhau.
+- `--augment N`: mỗi file train tạo thêm N bản biến thể (dịch thời gian, đổi âm lượng, trộn tiếng nền lấy từ các file silence).
 
-So sánh các cấu hình **chỉ trên validation**, tập test không bị đụng tới:
+Để so sánh các cấu hình thì chạy (chỉ dùng validation, không đụng test):
+
 ```powershell
 python -m ml.compare --manifest data/manifest_split.csv --output results/compare_01.csv
 ```
-Lệnh in bảng xếp hạng và câu lệnh train cho cấu hình tốt nhất. Validation ít mẫu thì chênh vài điểm là nhiễu; khi ngang nhau, chọn cấu hình đơn giản hơn. Sau khi chọn xong mới chạy `ml.evaluate` trên test **một lần**.
 
-CNN chưa được thêm vì cần PyTorch (nặng, ngoài requirements); `mlp` là mạng nơ-ron nhỏ dùng scikit-learn.
+Lệnh in bảng xếp hạng và câu lệnh train cho cấu hình tốt nhất. Validation ít mẫu thì chênh vài điểm cũng có thể chỉ là ngẫu nhiên, nếu ngang nhau thì chọn cấu hình đơn giản hơn. Chốt xong mới chạy `ml.evaluate` trên test, và chỉ chạy một lần.
 
-## 5. Số liệu và hình cho báo cáo
+CNN chưa có vì cần cài PyTorch khá nặng. `mlp` là mạng nơ-ron nhỏ của scikit-learn.
+
+## Hình và số liệu cho báo cáo
 
 ```powershell
 python -m ml.report --eval results/eval_01
@@ -83,23 +83,24 @@ python -m ml.learning_curve --manifest data/manifest_split.csv --output results/
 python -m ml.trial_report
 ```
 
-- `ml.report`: tạo `confusion_matrix.png`, `per_class_f1.png`, `summary.md` trong thư mục đánh giá.
-- `ml.learning_curve`: macro-F1 trên validation khi dùng 20–100% dữ liệu train; đường còn đi lên nghĩa là thu thêm còn có ích.
-- `ml.trial_report`: tổng hợp các lượt thử trong `results/measurements.csv` (đúng/bỏ sót/sai lệnh/kích hoạt nhầm, tỉ lệ thiết bị chạy thật, độ trễ median và p95 theo điều kiện) và độ trễ từ `results/events.jsonl`.
+- `ml.report` tạo `confusion_matrix.png`, `per_class_f1.png` và `summary.md` trong thư mục kết quả.
+- `ml.learning_curve` vẽ macro-F1 trên validation khi dùng 20% tới 100% dữ liệu train. Nếu đường vẫn còn đi lên thì thu thêm dữ liệu vẫn có ích.
+- `ml.trial_report` tổng hợp các lượt thử trong `results/measurements.csv` (đúng, bỏ sót, sai lệnh, kích hoạt nhầm, thiết bị chạy thật, độ trễ median và p95) và độ trễ trong `results/events.jsonl`.
 
-Độ trễ = từ lúc kết thúc thu 2 giây đến khi có kết quả (kèm ACK ở chế độ serial), đúng định nghĩa trong `docs/TEST_PLAN.md`.
+Độ trễ ở đây tính từ lúc thu xong 2 giây tới lúc có kết quả (ở chế độ serial thì tới lúc có ACK).
 
-## 6. GUI
+## GUI
 
-- **Space** = thu 2 giây và nhận diện (không kích hoạt khi đang gõ trong ô nhập).
-- Dòng kết quả lớn: lệnh nghe được, độ tin cậy, đã thực hiện hay bị từ chối; cảnh báo nếu bản thu quá nhỏ/bị cắt.
-- **Lịch sử** 50 lượt gần nhất kèm độ trễ.
-- **Chế độ thử nghiệm**: tick «Ghi lượt thử», chọn người nói, điều kiện (vd. `quiet`, `fan`, `2m`) và lệnh định nói; mỗi lần nói sẽ được nối vào `results/measurements.csv`. Khi quan sát thiết bị thật, bấm **Có/Không** để ghi `physical_success` cho lượt vừa rồi.
-- **Kết nối lại** sau lỗi serial (khi chạy với `--port`).
+- Bấm Space để thu 2 giây và nhận lệnh. Đang gõ trong ô nhập thì Space không kích hoạt.
+- Dòng chữ lớn hiện lệnh nghe được, độ tin cậy, có thực hiện hay không. Nếu bản thu nhỏ quá hoặc bị cắt thì có cảnh báo.
+- Phần lịch sử hiện 50 lần gần nhất kèm độ trễ.
+- Chế độ thử nghiệm: tick "Ghi lượt thử", điền người nói, điều kiện (ví dụ `quiet`, `fan`, `2m`) và lệnh định nói. Mỗi lần nói sẽ được ghi vào `results/measurements.csv`. Nếu đang nhìn thiết bị thật thì bấm Có/Không để ghi thiết bị có chạy đúng không.
+- Nút "Kết nối lại" dùng khi serial bị lỗi (chỉ hiện khi chạy với `--port`).
 
-## 7. Đóng gói .exe (Windows)
+## Đóng gói exe
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File packaging\build_exe.ps1
 ```
-Tạo `dist\VoiceControl\VoiceControl.exe`; nếu có `models\baseline.joblib` thì chép kèm và exe tự nạp. Nén cả thư mục `dist\VoiceControl` để chạy trên máy khác không cần cài Python. Script chưa được chạy thử trên Windows thật; nếu exe báo thiếu module, thêm `--hidden-import <tên module>` vào script.
+
+Kết quả là `dist\VoiceControl\VoiceControl.exe`. Nếu đã có `models\baseline.joblib` thì script chép theo và exe tự nạp model đó. Nén cả thư mục `dist\VoiceControl` là chạy được trên máy khác không cần cài Python. Script này nhóm chưa chạy thử, nếu exe báo thiếu module thì thêm `--hidden-import <tên module>` vào script.

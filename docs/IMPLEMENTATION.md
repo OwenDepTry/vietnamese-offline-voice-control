@@ -1,41 +1,52 @@
-# Cấu trúc phần CNTT
+# Cấu trúc code phần CNTT
 
-| File | Trách nhiệm |
-|---|---|
-| app/common.py | Đọc nhãn chung từ configs/commands.json |
-| app/recorder.py | Thu 2 giây, lưu PCM16, thêm metadata vào manifest |
-| ml/features.py | Đọc WAV, đổi sample rate, tùy chọn căn giữa tiếng nói, MFCC và pooling 4 đoạn |
-| ml/dataset.py | Xác thực manifest, chống lẫn phiên thu và trùng file giữa các tập |
-| ml/prepare_data.py | Chia tự động theo speaker hoặc chỉ định theo người/phiên; không ghi đè dữ liệu gốc |
-| ml/train_baseline.py | Fit scaler + classifier (logreg/svm/mlp) chỉ trên train, augmentation chỉ trên train; chọn threshold bằng validation |
-| ml/predict.py | Nạp bundle gồm tiền xử lý, model và threshold; trả nhãn và score |
-| ml/evaluate.py | Đánh giá test chưa thấy, xuất JSON/CSV |
-| app/serial_client.py | Simulator và serial thật; ACK/ERR/timeout |
-| app/controller.py | Chặn unknown/silence, điều phối và ghi log |
-| app/main.py | CLI |
-| app/gui.py | GUI Tkinter, chạy tác vụ nền; Space để nói, lịch sử, chế độ thử nghiệm, kết nối lại |
-| app/fake_device.py | Firmware ảo theo PROTOCOL.md; dùng qua `--port fake` hoặc cổng COM ảo; có tiêm lỗi |
-| app/trials.py | Ghi lượt thử vào results/measurements.csv |
-| ml/quality.py | Luật kiểm tra chất lượng bản thu (nhỏ, bị cắt, rè, silence có tiếng) |
-| ml/check_data.py | Báo cáo dữ liệu theo phiên, gắn cờ file, tạo manifest sạch |
-| ml/merge_manifest.py | Gộp dữ liệu từ máy khác, sao lưu và hoàn tác khi lỗi |
-| ml/compare.py | So sánh classifier/align/augment chỉ trên validation |
-| ml/learning_curve.py | Macro-F1 validation theo lượng dữ liệu train |
-| ml/report.py | Hình confusion matrix, F1 theo nhãn, summary.md |
-| ml/viz.py | Hàm vẽ hình cho notebook (dạng sóng/phổ, thời điểm nói, PCA, ngưỡng, so sánh, learning curve, độ trễ) |
-| notebooks/*.ipynb | Phân tích tương tác; chỉ gọi hàm trong app/ và ml/ |
-| ml/trial_report.py | Tổng hợp lượt thử trực tiếp và độ trễ median/p95 |
+## Các file chính
 
-## Đọc code theo thứ tự
-recorder → features → dataset → train_baseline → predict → controller → serial_client → gui.
+Thu âm và app:
+- `app/common.py`: đọc danh sách nhãn từ `configs/commands.json`, các file khác dùng chung.
+- `app/recorder.py`: thu 2 giây, lưu WAV PCM16, ghi thêm dòng vào manifest, kiểm tra nhanh chất lượng sau mỗi lần thu.
+- `app/controller.py`: nhận kết quả nhận dạng, chặn unknown/silence, gửi lệnh và ghi log.
+- `app/serial_client.py`: chế độ mô phỏng và serial thật (READY, ACK/ERR, timeout).
+- `app/fake_device.py`: firmware ảo viết bằng Python, làm đúng theo PROTOCOL.md, có thể giả lập lỗi.
+- `app/conformance.py`: chạy 19 trường hợp để kiểm tra firmware thật có đúng giao thức không.
+- `app/trials.py`: ghi từng lượt thử vào `results/measurements.csv`.
+- `app/main.py`: bản dòng lệnh. `app/gui.py`: giao diện Tkinter.
 
-## Hợp đồng mô hình
-Bundle schema_version=1 chứa pipeline, feature config, threshold, seed, phiên bản thư viện, mã người nói và phiên thu đã dùng, SHA256 các bản ghi đã dùng và manifest. Score của Logistic Regression không phải bảo đảm xác suất đúng đã hiệu chuẩn. Unknown là lớp có dữ liệu thật và cũng là kết quả từ chối khi score lệnh thấp.
+Học máy:
+- `ml/features.py`: đọc WAV, đổi sample rate, tính MFCC (có tùy chọn dời đoạn nói vào giữa).
+- `ml/quality.py`: các luật phát hiện file nói nhỏ, bị cắt, bị rè, silence có tiếng.
+- `ml/dataset.py`: đọc manifest, báo lỗi nếu một phiên bị lẫn vào hai tập hoặc có file trùng.
+- `ml/prepare_data.py`: chia train/validation/test (tự động theo người, hoặc chỉ định người/phiên).
+- `ml/train_baseline.py`: train scaler + bộ phân loại trên tập train, chọn ngưỡng trên validation.
+- `ml/compare.py`: so sánh các cấu hình, chỉ dùng validation.
+- `ml/predict.py`: nạp model, trả về nhãn và score.
+- `ml/evaluate.py`: chấm trên tập test, xuất JSON và CSV.
+- `ml/report.py`, `ml/learning_curve.py`, `ml/trial_report.py`, `ml/viz.py`: hình và bảng cho báo cáo.
+- `ml/check_data.py`, `ml/merge_manifest.py`: kiểm tra dữ liệu, gộp dữ liệu thu từ máy khác.
 
-Đặc trưng: 2 giây, 16 kHz; frame 25 ms, hop 10 ms, FFT512, 40 mel, 13 MFCC; mean/std trong 4 vùng thời gian = 104 chiều. Clip ngắn được pad; clip dài bị từ chối, không âm thầm cắt. Không peak-normalize vì sẽ làm tăng tiếng nền. Scaler fit chỉ trên train.
+`notebooks/`: phân tích bằng Jupyter, chỉ gọi lại các hàm ở trên.
 
-## Hạn chế
-MFCC pooling có thể chưa phân biệt tốt bật/tắt trong môi trường nhiễu; cần kiểm tra confusion matrix. Ngưỡng tối ưu macro-F1 không tối ưu riêng chi phí kích hoạt nhầm; nhóm phải đo tỷ lệ này và có thể đổi tiêu chí trên validation trước test cuối. Dữ liệu pilot nhỏ không bảo đảm hoạt động với người lạ. Chưa hiệu chỉnh domain shift giữa các micro.
+Nếu mới đọc code thì nên đi theo thứ tự: recorder, features, dataset, train_baseline, predict, controller, serial_client, gui.
 
-## Đã có code, nhóm vẫn phải thực hiện
-Thu dữ liệu và xem lại nhãn; train bằng giọng thật; nghe thử; kiểm chứng cổng COM, board, thời gian READY và mạch; ghi số liệu; tự đọc/giải thích thuật toán khi báo cáo. Không cần viết lại khung, nhưng không đánh dấu các công việc thực nghiệm đã hoàn thành chỉ vì có code.
+## Đặc trưng
+
+Mỗi clip 2 giây, 16 kHz. Frame 25 ms, bước 10 ms, FFT 512, 40 bộ lọc mel, lấy 13 hệ số MFCC. Sau đó chia clip thành 4 đoạn thời gian, mỗi đoạn lấy trung bình và độ lệch chuẩn, ra vector 104 chiều.
+
+Chia 4 đoạn để giữ được thứ tự thời gian: "bật" và "tắt" khác nhau ở đầu câu, "đèn" và "quạt" khác ở cuối câu. Nếu lấy trung bình cả clip thì mất thông tin này.
+
+Clip ngắn hơn 2 giây thì được đệm thêm, dài hơn thì báo lỗi chứ không tự cắt. Không chuẩn hóa theo biên độ lớn nhất vì sẽ làm tiếng nền to lên. Scaler chỉ fit trên tập train.
+
+## File model
+
+Mỗi file `.joblib` lưu: pipeline (scaler + bộ phân loại), cấu hình đặc trưng, ngưỡng, seed, phiên bản thư viện, danh sách người/phiên đã dùng để train và validation, mã băm SHA256 của các file đã dùng. Nhờ vậy `ml.evaluate` biết được tập test có bị trùng với dữ liệu train không.
+
+Score của model không phải xác suất đã hiệu chỉnh, chỉ dùng để so với ngưỡng. `unknown` vừa là một lớp có dữ liệu thật, vừa là kết quả trả về khi score của lệnh thấp hơn ngưỡng.
+
+## Hạn chế đã biết
+
+- MFCC chia 4 đoạn có thể chưa đủ để phân biệt bật/tắt khi có tiếng ồn, phải xem confusion matrix.
+- Ngưỡng đang chọn theo macro-F1, chưa ưu tiên riêng việc giảm kích hoạt nhầm. Nếu cần thì đổi tiêu chí trên validation trước khi chấm test.
+- Dữ liệu ít người nên chưa nói được gì về khả năng nhận giọng người lạ.
+- Chưa xử lý khác biệt giữa các loại micro.
+
+Có code không có nghĩa là xong việc: vẫn phải thu dữ liệu, nghe lại, train bằng giọng thật, thử với board và ghi số liệu thì mới đánh dấu hoàn thành trong `docs/TASKS.md`.

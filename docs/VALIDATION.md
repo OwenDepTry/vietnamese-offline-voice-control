@@ -1,29 +1,35 @@
-# Kiểm chứng bản bàn giao
+# Đã kiểm tra những gì
 
-- 9 tests unittest đã PASS trên Python runtime Linux với NumPy 2.3.5, SciPy 1.17.0, scikit-learn 1.8.0 và joblib 1.5.3.
-- Luồng đầu-cuối dùng sóng tổng hợp để kiểm tra lưu WAV/manifest, chia speaker, huấn luyện, lưu/nạp model, đánh giá và xuất báo cáo; không phải dữ liệu tiếng Việt.
-- Serial dùng transport giả: ACK đúng/sai, stale id, ERR, reset, timeout và dòng quá dài; không kiểm chứng board thật.
-- Chưa có micro và phần cứng ở môi trường kiểm thử, nên thu âm thật và USB/UART thật cần kiểm chứng tại máy của nhóm.
-- Tkinter đã import được, nhưng môi trường không có display; chưa chạy hoặc đánh giá trực quan GUI. CLI mô phỏng được kiểm tra riêng.
-- Không đóng gói model tổng hợp hoặc số liệu giả làm kết quả dự án.
+Ghi lại phần nào đã thử thật, phần nào mới chỉ có test tự động, để lúc viết báo cáo không ghi quá lên.
 
-## Tài liệu API tham chiếu
-- https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
-- https://python-sounddevice.readthedocs.io/en/latest/usage.html
-- https://pyserial.readthedocs.io/en/latest/pyserial_api.html
+## Test tự động
 
-## Kiểm tra bổ sung
-- CLI mô phỏng LIGHT_ON → FAN_ON → LIGHT_OFF chạy đúng và tạo log.
-- pySerial 3.5 được kiểm tra với pseudo-terminal Linux: mở cổng, nhận READY, gửi CMD, nhận ACK thành công. Đây vẫn chưa phải board thật.
-- sounddevice 0.5.3 cài được nhưng import không chạy ở môi trường này vì thiếu thư viện hệ thống PortAudio. Thu âm thật chưa được kiểm chứng.
+Chạy `python -m unittest discover -s tests -v` (hiện có 32 test, CI trên GitHub cũng chạy lại mỗi lần push). Test dùng âm thanh tổng hợp và cổng serial giả, nên chỉ chứng minh code chạy đúng logic, không nói gì về độ chính xác với giọng tiếng Việt. Các phần được test:
 
-## Công cụ bổ sung (bản cập nhật)
-- 24 tests PASS trên Linux, Python 3.13, scikit-learn 1.9 và matplotlib 3.11.2 (requirements ghim scikit-learn 1.8.0; CI chạy Python 3.12). 1 test GUI bị bỏ qua vì môi trường không có tkinter.
-- ml.check_data chạy trên 90 bản thu thật p01/s01: gắn cờ đúng 5 file đã phát hiện khi nghe/kiểm tra thủ công (1 quá nhỏ, 4 bị cắt cuối), không gắn cờ file silence nào.
-- Luồng GUI (thu, nhận diện, lệnh tay, ghi lượt thử, đánh dấu vật lý, lỗi serial, kết nối lại) được chạy với tkinter giả lập và firmware ảo; chưa mở cửa sổ Tkinter thật.
-- Firmware ảo qua `--port fake` được kiểm tra với SerialClient thật. Chế độ cổng COM ảo (com0com, pySerial) và script đóng gói exe chưa được chạy trên Windows.
-- Các con số từ dữ liệu thật trong quá trình phát triển chỉ là smoke test trên cùng một phiên thu, không dùng làm kết quả dự án.
+- Thu và lưu WAV, ghi manifest, chặn mã người nói không hợp lệ.
+- Chia tập theo người/phiên, báo lỗi khi một phiên bị lẫn vào hai tập hoặc có file trùng.
+- Train, lưu/nạp model, chọn ngưỡng, đánh giá, các tùy chọn svm/mlp/align/augment.
+- Serial: ACK đúng/sai id, ERR, reset giữa chừng, timeout, dòng quá dài. Sau lỗi thì app không tự gửi lại.
+- Firmware ảo đúng giao thức, và công cụ `app.conformance` bắt được các lỗi firmware hay gặp.
+- Toàn bộ luồng từ chia tập tới gửi lệnh vẫn chạy khi chặn hết kết nối mạng (`tests/test_offline.py`).
+- Kiểm tra chất lượng file, gộp dữ liệu, ghi lượt thử, notebook (đã xóa output, import đúng).
 
-## Notebooks
-- 4 notebook được chạy toàn bộ các ô code bằng trình chạy mô phỏng kernel (không có Jupyter trong môi trường kiểm thử): 01 trên 90 bản thu thật; 02 và 03 trên phiên giả tách từ s01 (chỉ để kiểm tra luồng); 04 với firmware ảo. Chạy lại lần hai (model/đánh giá đã có) và trường hợp chưa đủ phiên đều cho thông báo đúng. Chưa mở trong JupyterLab/VS Code thật.
-- Tổng cộng 28 tests PASS (1 test GUI bỏ qua do không có tkinter). tests/test_notebooks.py kiểm tra JSON hợp lệ, đã xóa output, cú pháp từng ô và các hàm import từ app/ml còn tồn tại.
+## Dữ liệu thật
+
+- Đã thu 90 mẫu p01/s01 (6 nhãn x 15). `ml.check_data` gắn cờ 5 file: 1 file nói quá nhỏ, 4 file tiếng nói chạm cuối file. Khớp với lúc nghe lại bằng tai.
+- Khi xem phổ tần thì thấy: đầu file nào cũng có khoảng 0,1-0,18 s toàn số 0 (micro mở chậm), và tiếng nền trong file silence giảm khoảng 14 dB sau giây 1,3. Có thể do chế độ lọc ồn của Windows. Chưa xử lý.
+- Chưa có kết quả nhận dạng thật vì mới có một phiên. Mấy con số thử trong lúc viết code (tách s01 ra làm nhiều phần) không dùng làm kết quả.
+
+## Chưa thử
+
+- Board thật, firmware thật, `app.conformance` với cổng COM thật.
+- Cặp cổng COM ảo bằng com0com.
+- Đóng gói exe (`packaging/build_exe.ps1`) và script tạo issue.
+- GUI: cần thử lại đầy đủ các chức năng mới trên máy (Space, chế độ ghi lượt thử, nút Có/Không, kết nối lại).
+- Notebook 02 và 03 với dữ liệu thật (đang chờ s02, s03).
+
+## Tài liệu tham khảo
+
+- scikit-learn Pipeline: https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html
+- python-sounddevice: https://python-sounddevice.readthedocs.io/en/latest/usage.html
+- pySerial API: https://pyserial.readthedocs.io/en/latest/pyserial_api.html

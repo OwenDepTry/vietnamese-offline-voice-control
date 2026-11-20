@@ -1,7 +1,9 @@
-# Firmware — thành viên ĐTVT phụ trách
+# Firmware
 
-Chưa chốt board nên chưa tạo mã GPIO hoặc cấu hình build. Sau EE-01, thêm src/, cấu hình công cụ build và hướng dẫn nạp đúng board.
+Phần này bạn ĐTVT phụ trách. Chưa chốt board nên chưa có code. Sau khi chọn board (EE-01) thì thêm `src/`, cấu hình build và hướng dẫn nạp.
 
-Tách parser serial, điều khiển đầu ra và trạng thái. Thực hiện docs/PROTOCOL.md. Không nối quạt trực tiếp vào GPIO; chọn driver theo dòng tải và mạch bảo vệ phù hợp. MVP dùng điện áp thấp, không điều khiển điện lưới.
+Nên tách 3 phần: đọc và phân tích lệnh serial, điều khiển chân ra, lưu trạng thái. Làm theo `docs/PROTOCOL.md`. Không nối quạt thẳng vào chân GPIO mà phải qua transistor/MOSFET, có diode bảo vệ. MVP chỉ dùng điện áp thấp, không đụng điện lưới.
 
-Bản tham chiếu hành vi: `app/fake_device.py` (lớp `FakeDevice`) cài đặt đúng PROTOCOL.md bằng Python và có test trong `tests/test_tools.py`. Firmware thật nên trả lời giống hệt cho cùng chuỗi byte vào. Board không tự reset khi mở cổng (vd. STM32 USB CDC) cần gửi lại `READY,1` khi máy tính mở cổng (DTR bật), nhưng không gửi READY lặp lại trong lúc đang xử lý lệnh.
+Muốn biết firmware phải trả lời thế nào thì xem `app/fake_device.py` (lớp `FakeDevice`), đây là bản viết bằng Python đã có test. Viết xong thì kiểm tra bằng `python -m app.conformance --port COMx`.
+
+Nếu dùng board không tự reset khi mở cổng (ví dụ STM32 qua USB CDC) thì phải gửi lại `READY,1` mỗi khi máy tính mở cổng (DTR bật), nhưng đừng gửi READY trong lúc đang xử lý lệnh.

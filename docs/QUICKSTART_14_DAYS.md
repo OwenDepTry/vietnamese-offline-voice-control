@@ -1,10 +1,10 @@
-# Kế hoạch 14 ngày sau khi có code
+# Kế hoạch 14 ngày
 
-1–2: Cài môi trường, chạy tests và GUI mô phỏng. ĐTVT chốt board và lắp LED.
-3–4: Thu pilot đủ 6 nhãn/người; thử gõ lệnh qua serial thật.
-5–7: Chia speaker, train baseline, phân tích validation, ghép giọng nói → thiết bị.
-8–10: Bổ sung dữ liệu yếu ở train/validation, sửa nhiễu phần cứng; khóa tính năng.
-11–12: Đóng băng model, đánh giá test mới và đo vật lý, độ trễ.
-13–14: Báo cáo kết quả thật, video offline, hướng dẫn tái lập và push repo.
+- Ngày 1-2: cài môi trường, chạy test và GUI mô phỏng. Bên ĐTVT chốt board và lắp LED.
+- Ngày 3-4: thu dữ liệu thử đủ 6 nhãn mỗi người; thử gõ lệnh qua serial thật.
+- Ngày 5-7: chia tập, train baseline, xem kết quả trên validation, ghép giọng nói với thiết bị.
+- Ngày 8-10: thu thêm cho những nhãn yếu, sửa nhiễu phần cứng, chốt tính năng.
+- Ngày 11-12: chốt model, chấm test, đo trên thiết bị thật và đo độ trễ.
+- Ngày 13-14: viết báo cáo với kết quả thật, quay video chạy offline, viết hướng dẫn chạy lại, push repo.
 
-Ưu tiên sửa dữ liệu/giao tiếp trước khi thêm CNN. Không cần đợi phần cứng để thu âm và train.
+Ưu tiên sửa dữ liệu và phần giao tiếp trước, CNN để sau. Không cần đợi phần cứng mới thu âm và train.

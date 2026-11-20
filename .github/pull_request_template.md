@@ -1,10 +1,10 @@
-## Thay đổi
+## Thay đổi gì
 
 ## Issue liên quan
 
 ## Đã kiểm tra
-- [ ] Ghi cách kiểm tra và kết quả thực tế
-- [ ] Cập nhật tài liệu/giao thức nếu thay đổi
-- [ ] Không chứa dữ liệu cá nhân, secrets hoặc artifact lớn
+- [ ] Đã chạy test (`python -m unittest discover -s tests -v`) và ghi kết quả thử thật nếu có
+- [ ] Đã cập nhật tài liệu/giao thức nếu có thay đổi
+- [ ] Không có dữ liệu cá nhân, file thu âm, mật khẩu hay file lớn
 
-## Phần chưa kiểm chứng
+## Chưa kiểm tra được
